@@ -41,4 +41,20 @@ export default abstract class AbstractProduct {
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
         await page.setViewport({ height: 800, width: 1200 });
     }
+
+    protected async getTextContent(elemHandle: puppeteer.ElementHandle[]): Promise<string> {
+        let retStr = '';
+
+        if (elemHandle.length > 1) {
+            for (let singleElemHandle of elemHandle) {
+                retStr += (await singleElemHandle.evaluate(elem => elem.textContent))?.trim() + ' ';
+            }
+            return retStr.trim();
+        } else if (elemHandle.length) {
+            retStr = await elemHandle[0].evaluate(elem => elem.textContent) as string;
+            return retStr.trim();
+        } else {
+            return '';
+        }
+    }
 }
